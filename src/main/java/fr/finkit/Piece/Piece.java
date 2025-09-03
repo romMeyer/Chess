@@ -5,11 +5,11 @@ import fr.finkit.core.Board;
 import java.util.List;
 
 public abstract class Piece {
-    protected Color color;
+    protected PieceColor pieceColor;
     protected String img;
 
-    public Piece(Color color) {
-        this.color = color;
+    public Piece(PieceColor pieceColor) {
+        this.pieceColor = pieceColor;
     }
 
     public abstract List<Position> getLegalMoves(Board board, Position position);
@@ -18,7 +18,7 @@ public abstract class Piece {
         return img;
     }
 
-    public Color getColor() {
-        return color;
+    public PieceColor getColor() {
+        return pieceColor;
     }
 }

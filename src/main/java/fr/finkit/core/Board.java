@@ -1,6 +1,6 @@
 package fr.finkit.core;
 
-import fr.finkit.Piece.Color;
+import fr.finkit.Piece.PieceColor;
 import fr.finkit.Piece.Pawn;
 import fr.finkit.Piece.Piece;
 import fr.finkit.Piece.Position;
@@ -20,12 +20,14 @@ public class Board {
         return piece.getLegalMoves(this, pos);
     }
 
-    public void move(Position piecePos, Position pos) {
+    public boolean move(Position piecePos, Position pos) {
         if (getLegalMovesForPiece(piecePos).contains(pos)){
             Piece piece = getPiece(piecePos);
             setPiece(pos, piece);
             setPiece(piecePos, null);
+            return true;
         }
+        return false;
     }
 
     private void initTerrain() {
@@ -39,7 +41,7 @@ public class Board {
 //        terrain[0][7] = new
 
         for (int col = 0; col < 8; col++) {
-            terrain[1][col] = new Pawn(Color.BLACK);
+            terrain[1][col] = new Pawn(PieceColor.BLACK);
         }
 
         // Cases vides (rangées 2 à 5)
@@ -51,7 +53,7 @@ public class Board {
 
         // Pièces blanches (rangée 6 et 7)
         for (int col = 0; col < 8; col++) {
-            terrain[6][col] = new Pawn(Color.WHITE);
+            terrain[6][col] = new Pawn(PieceColor.WHITE);
         }
 //
 //        terrain[7][0] = new

@@ -1,6 +1,6 @@
 package fr.finkit.Piece;
 
-public enum Color {
+public enum PieceColor {
     BLACK,
     WHITE
 }
