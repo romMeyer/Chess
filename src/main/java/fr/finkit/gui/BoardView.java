@@ -161,8 +161,8 @@ public class BoardView {
         }
 
         ImageView iv = new ImageView(img);
-        iv.setPreserveRatio(true);
-        iv.setFitWidth(tileSize * 0.8);
+        iv.setPreserveRatio(false);
+        iv.setFitWidth(tileSize * 0.7);
         iv.setFitHeight(tileSize * 0.8);
         return new Group(iv);
     }
