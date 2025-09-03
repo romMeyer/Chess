@@ -17,6 +17,7 @@ import javafx.scene.text.Font;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 
 public class BoardView {
     private final GridPane grid = new GridPane();
@@ -122,7 +123,7 @@ public class BoardView {
                 // pièces
                 Piece piece = board.getPiece(new Position(r, c));
                 if (piece != null) {
-                    sp.getChildren().add(pieceNode(piece, r, c));
+                    sp.getChildren().add(pieceNode(piece));
                 }
 
                 // highlights des coups
@@ -145,45 +146,24 @@ public class BoardView {
         throw new IllegalStateException("Square not found: " + r + "," + c);
     }
 
-    private Group pieceNode(Piece piece, int r, int c) {
-        // 1) essai avec image si disponible (ex: "Pawn_WHITE.png")
-        String key = piece.getClass().getSimpleName() + "_" + piece.getColor().name();
-        Image img = imageCache.computeIfAbsent(key, k -> {
-            try {
-                // mets tes PNG dans resources: /assets/chess/Pawn_WHITE.png etc.
-                String path = "/assets/chess/" + k + ".png";
-                return new Image(getClass().getResourceAsStream(path));
-            } catch (Exception e) {
-                return null;
-            }
-        });
-
-        if (img != null) {
-            ImageView iv = new ImageView(img);
-            iv.setFitWidth(tileSize * 0.8);
-            iv.setFitHeight(tileSize * 0.8);
-            return new Group(iv);
+    private Group pieceNode(Piece piece) {
+        // clé de cache : "Pawn_White" etc.
+        Image img;
+        try {
+            // Couleur → "White" ou "Black"
+            String colorDir = (piece.getColor() == PieceColor.WHITE) ? "White" : "Black";
+            String name = piece.getClass().getSimpleName(); // Pawn, Rook, etc.
+            String path = "/assets/" + colorDir + "/" + name + ".png";
+            img = new Image((path));
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            return null;
         }
 
-        // 2) fallback : glyphes Unicode
-        String glyph = unicodeFor(piece);
-        Label label = new Label(glyph);
-        label.setFont(Font.font(tileSize * 0.7));
-        label.setTextFill(piece.getColor() == PieceColor.WHITE ? Color.BLACK : Color.WHITE);
-        return new Group(label);
-    }
-
-    private String unicodeFor(Piece p) {
-        boolean w = p.getColor() == PieceColor.WHITE;
-        String name = p.getClass().getSimpleName().toLowerCase();
-        return switch (name) {
-            case "king"   -> w ? "♔" : "♚";
-            case "queen"  -> w ? "♕" : "♛";
-            case "rook"   -> w ? "♖" : "♜";
-            case "bishop" -> w ? "♗" : "♝";
-            case "knight" -> w ? "♘" : "♞";
-            case "pawn"   -> w ? "♙" : "♟";
-            default -> "?";
-        };
+        ImageView iv = new ImageView(img);
+        iv.setPreserveRatio(true);
+        iv.setFitWidth(tileSize * 0.8);
+        iv.setFitHeight(tileSize * 0.8);
+        return new Group(iv);
     }
 }
