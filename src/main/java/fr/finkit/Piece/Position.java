@@ -1,27 +1,14 @@
 package fr.finkit.Piece;
 
-public class Position {
-    int x;
-    int y;
 
-    public Position(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public int getX() {
+public record Position(int x, int y) {
+    @Override
+    public int x() {
         return x;
     }
 
-    public int getY() {
+    @Override
+    public int y() {
         return y;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public void setY(int y) {
-        this.y = y;
     }
 }
