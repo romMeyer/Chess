@@ -15,22 +15,55 @@ public class Bishop extends Piece {
     public List<Position> getLegalMoves(Board board, Position pos) {
         List<Position> moves = new ArrayList<>();
         List<Position> legalMoves = new ArrayList<>();
-
-        for (int i = 0; i < 7; i++) {
-            moves.add(new Position(pos.x()+i, pos.y()+i));
-            moves.add(new Position(pos.x()-i, pos.y()+i));
-            moves.add(new Position(pos.x()+i, pos.y()-i));
-            moves.add(new Position(pos.x()-i, pos.y()-i));
-        }
         int x, y;
-        for (Position p : moves) {
-            x = p.x();
-            y = p.y();
-            if (( x <= 7 && x >= 0 ) && (y <= 7 && y >= 0))
-                if (board.getPiece(p) == null || board.getPiece(p).getColor() != pieceColor)
-                    legalMoves.add(p);
+
+        // Diagonale bas-droite
+        for (x = pos.x() + 1, y = pos.y() + 1; x <= 7 && y <= 7; x++, y++) {
+            Position p = new Position(x, y);
+            Piece piece = board.getPiece(p);
+            if (piece == null) {
+                legalMoves.add(p);
+            } else {
+                if (piece.getColor() != this.pieceColor) legalMoves.add(p);
+                break;
+            }
         }
 
+        // Diagonale haut-droite
+        for (x = pos.x() + 1, y = pos.y() - 1; x <= 7 && y >= 0; x++, y--) {
+            Position p = new Position(x, y);
+            Piece piece = board.getPiece(p);
+            if (piece == null) {
+                legalMoves.add(p);
+            } else {
+                if (piece.getColor() != this.pieceColor) legalMoves.add(p);
+                break;
+            }
+        }
+
+        // Diagonale bas-gauche
+        for (x = pos.x() - 1, y = pos.y() + 1; x >= 0 && y <= 7; x--, y++) {
+            Position p = new Position(x, y);
+            Piece piece = board.getPiece(p);
+            if (piece == null) {
+                legalMoves.add(p);
+            } else {
+                if (piece.getColor() != this.pieceColor) legalMoves.add(p);
+                break;
+            }
+        }
+
+        // Diagonale haut-gauche
+        for (x = pos.x() - 1, y = pos.y() - 1; x >= 0 && y >= 0; x--, y--) {
+            Position p = new Position(x, y);
+            Piece piece = board.getPiece(p);
+            if (piece == null) {
+                legalMoves.add(p);
+            } else {
+                if (piece.getColor() != this.pieceColor) legalMoves.add(p);
+                break;
+            }
+        }
         return legalMoves;
     }
 
