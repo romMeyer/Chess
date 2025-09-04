@@ -19,6 +19,7 @@ public class Pawn extends Piece {
         Piece adjacentPiece;
 
         if (pieceColor == PieceColor.BLACK){
+            if(pos.x() == 7) return legalMoves;
             frontPiecePos = new Position(pos.x()+1, pos.y());
             if (board.getPiece(frontPiecePos) == null) legalMoves.add(frontPiecePos);
 
@@ -31,16 +32,23 @@ public class Pawn extends Piece {
             if (adjacentPiece != null && adjacentPiece.getColor() != getColor()) legalMoves.add(adjacentPiecePos);
 
         } else if (pieceColor == PieceColor.WHITE){
+            if(pos.x() == 0) return legalMoves;
+
             frontPiecePos = new Position(pos.x()-1, pos.y());
             if (board.getPiece(frontPiecePos) == null) legalMoves.add(frontPiecePos);
 
-            adjacentPiecePos = new Position(pos.x()-1, pos.y()-1);
-            adjacentPiece = board.getPiece(adjacentPiecePos);
-            if (adjacentPiece != null && adjacentPiece.getColor() != getColor()) legalMoves.add(adjacentPiecePos);
+            if (pos.y() > 0){
+                adjacentPiecePos = new Position(pos.x()-1, pos.y()-1);
+                adjacentPiece = board.getPiece(adjacentPiecePos);
+                if (adjacentPiece != null && adjacentPiece.getColor() != getColor()) legalMoves.add(adjacentPiecePos);
+            };
 
-            adjacentPiecePos = new Position(pos.x()-1, pos.y()+1);
-            adjacentPiece = board.getPiece(adjacentPiecePos);
-            if (adjacentPiece != null && adjacentPiece.getColor() != getColor()) legalMoves.add(adjacentPiecePos);
+            if (pos.y() < 7){
+                adjacentPiecePos = new Position(pos.x()-1, pos.y()+1);
+                adjacentPiece = board.getPiece(adjacentPiecePos);
+                if (adjacentPiece != null && adjacentPiece.getColor() != getColor()) legalMoves.add(adjacentPiecePos);
+            }
+
         }
 
         return legalMoves;
