@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Board {
     Piece[][] terrain;
+    PieceColor playerTurn = PieceColor.WHITE;
 
     public Board() {
         this.terrain = new Piece[8][8];
@@ -18,10 +19,13 @@ public class Board {
     }
 
     public boolean move(Position piecePos, Position pos) {
+        Piece piece = getPiece(piecePos);
+        if (piece == null || piece.getColor() != playerTurn) return false;
         if (getLegalMovesForPiece(piecePos).contains(pos)){
-            Piece piece = getPiece(piecePos);
             setPiece(pos, piece);
             setPiece(piecePos, null);
+            if (playerTurn == PieceColor.WHITE){ playerTurn = PieceColor.BLACK;}
+            else { playerTurn = PieceColor.WHITE;}
             return true;
         }
         return false;
@@ -65,6 +69,10 @@ public class Board {
 
     public Piece getPiece(Position pos) {
         return terrain[pos.x()][pos.y()];
+    }
+
+    public PieceColor getPlayerTurn() {
+        return playerTurn;
     }
 
     public void setPiece(Position pos, Piece piece) {

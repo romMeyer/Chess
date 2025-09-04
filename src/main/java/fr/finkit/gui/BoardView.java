@@ -85,6 +85,7 @@ public class BoardView {
 
         // Sinon on (re)sélectionne si une pièce amicale est présente
         if (p != null) {
+            if(board.getPlayerTurn() != p.getColor()) return;
             selected = clicked;
             var list = board.getLegalMovesForPiece(selected); // ← ta méthode
             legalHighlights.clear();
