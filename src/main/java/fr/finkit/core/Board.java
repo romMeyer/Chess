@@ -22,13 +22,33 @@ public class Board {
         Piece piece = getPiece(piecePos);
         if (piece == null || piece.getColor() != playerTurn) return false;
         if (getLegalMovesForPiece(piecePos).contains(pos)){
+            for (Piece[] pieces : terrain){
+                for (Piece pieceEP : pieces){
+                    if (pieceEP != null) pieceEP.setEnPassant(false);
+                }
+            }
+            checkEnPassant(piecePos, pos, piece);
             setPiece(pos, piece);
             setPiece(piecePos, null);
-            if (playerTurn == PieceColor.WHITE){ playerTurn = PieceColor.BLACK;}
-            else { playerTurn = PieceColor.WHITE;}
+            playerTurn = (playerTurn == PieceColor.WHITE) ? PieceColor.BLACK : PieceColor.WHITE;
+
             return true;
         }
         return false;
+    }
+
+    private void checkEnPassant(Position piecePos, Position pos, Piece piece) {
+        if (!(piece instanceof Pawn)) return;
+
+        if (piece.getColor() == PieceColor.BLACK) piece.setEnPassant( piecePos.x() == 1 && pos.x() == 3);
+        else piece.setEnPassant(piecePos.x() == 6 && pos.x() == 4);
+
+        if(piece.getEnPassant()) System.out.println(piece.getColor());
+
+        if (piecePos.y() != pos.y() && getPiece(pos) == null) {
+            Position capturedPos = new Position(piecePos.x(), pos.y());
+            setPiece(capturedPos, null);
+        }
     }
 
     private void initTerrain() {
