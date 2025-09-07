@@ -2,6 +2,7 @@ package fr.finkit.core;
 
 import fr.finkit.Piece.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Board {
@@ -15,18 +16,36 @@ public class Board {
 
     public List<Position> getLegalMovesForPiece(Position pos){
         Piece piece = getPiece(pos);
-        return piece.getLegalMoves(this, pos);
+        List<Position> moves = piece.getLegalMoves(this, pos);
+        List<Position> legalMoves = new ArrayList<>();
+
+        if (isCheck() == playerTurn){
+            for (Position move : moves) {
+                Piece captured = getPiece(move);
+
+                setPiece(move, piece);
+                setPiece(pos, null);
+
+                boolean safe = (isCheck() != playerTurn);
+
+                setPiece(pos, piece);
+                setPiece(move, captured);
+
+                if(safe){
+                    legalMoves.add(move);
+                }
+            }
+            return legalMoves;
+        }
+
+        return moves;
     }
 
     public boolean move(Position piecePos, Position pos) {
         Piece piece = getPiece(piecePos);
         if (piece == null || piece.getColor() != playerTurn) return false;
         if (getLegalMovesForPiece(piecePos).contains(pos)){
-            for (Piece[] pieces : terrain){
-                for (Piece pieceEP : pieces){
-                    if (pieceEP != null) pieceEP.setEnPassant(false);
-                }
-            }
+
             checkEnPassant(piecePos, pos, piece);
             setPiece(pos, piece);
             setPiece(piecePos, null);
@@ -40,6 +59,11 @@ public class Board {
     private void checkEnPassant(Position piecePos, Position pos, Piece piece) {
         if (!(piece instanceof Pawn)) return;
 
+        for (Piece[] pieces : terrain){
+            for (Piece pieceEP : pieces){
+                if (pieceEP != null) pieceEP.setEnPassant(false);
+            }
+        }
         if (piece.getColor() == PieceColor.BLACK) piece.setEnPassant( piecePos.x() == 1 && pos.x() == 3);
         else piece.setEnPassant(piecePos.x() == 6 && pos.x() == 4);
 
@@ -85,6 +109,23 @@ public class Board {
         terrain[7][5] = new Bishop(PieceColor.WHITE);
         terrain[7][6] = new Knight(PieceColor.WHITE);
         terrain[7][7] = new Rook(PieceColor.WHITE);
+    }
+
+    public PieceColor isCheck(){
+        List<Position> playableMoves = new ArrayList<>();
+        for (int r=0; r < 8; r++) {
+            for (int y =  0; y < 8; y++) {
+                Piece piece = getPiece(new Position(r, y));
+                if (piece == null) continue;
+                if (piece.getColor() != playerTurn) {
+                    playableMoves = piece.getLegalMoves(this, new Position(r, y));
+                    for (Position pos: playableMoves){
+                        if (getPiece(pos) instanceof King) return (playerTurn == PieceColor.WHITE) ? PieceColor.WHITE : PieceColor.BLACK;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public Piece getPiece(Position pos) {

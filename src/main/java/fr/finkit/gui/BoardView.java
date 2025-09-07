@@ -107,12 +107,21 @@ public class BoardView {
             if (node instanceof StackPane sp) sp.getChildren().clear();
         }
 
+        // couleur en échec et position du roi
+        PieceColor checkColor = board.isCheck(); // retourne WHITE, BLACK, ou null
+        Position kingInCheck = (checkColor != null) ? findKing(checkColor) : null;
+
         for (int r = 0; r < 8; r++) {
             for (int c = 0; c < 8; c++) {
                 var sp = getSquare(r, c);
 
-                // surbrillance sélection
-                if (selected != null && selected.x() == r && selected.y() == c) {
+                // ordre de priorité des bordures : ROI EN ÉCHEC > sélection > rien
+                if (kingInCheck != null && kingInCheck.x() == r && kingInCheck.y() == c) {
+                    sp.setBorder(new Border(new BorderStroke(
+                            Color.web("#E63946"), // rouge
+                            BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4)
+                    )));
+                } else if (selected != null && selected.x() == r && selected.y() == c) {
                     sp.setBorder(new Border(new BorderStroke(
                             Color.web("#FFD166"),
                             BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(4)
@@ -136,6 +145,7 @@ public class BoardView {
             }
         }
     }
+
 
     private StackPane getSquare(int r, int c) {
         for (var n : grid.getChildren()) {
@@ -167,4 +177,18 @@ public class BoardView {
         iv.setFitHeight(tileSize * 0.8);
         return new Group(iv);
     }
+
+    private Position findKing(PieceColor color) {
+        for (int r = 0; r < 8; r++) {
+            for (int c = 0; c < 8; c++) {
+                Piece p = board.getPiece(new Position(r, c));
+                if (p == null) continue;
+                if (p.getColor() == color && p.getClass().getSimpleName().equals("King")) {
+                    return new Position(r, c);
+                }
+            }
+        }
+        return null;
+    }
+
 }
