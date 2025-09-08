@@ -21,7 +21,7 @@ public class Pawn extends Piece {
         Piece pieceEnPassant;
 
         if (pieceColor == PieceColor.BLACK){
-            if(pos.x() == 1 && board.getPiece(new Position(pos.x()+2, pos.y()))== null) legalMoves.add(new Position(pos.x()+2, pos.y()));
+            if(pos.x() == 1 && board.getPiece(new Position(pos.x()+2, pos.y())) == null && board.getPiece(new Position(pos.x()+1, pos.y())) == null) legalMoves.add(new Position(pos.x()+2, pos.y()));
             if(pos.x() == 7) return legalMoves;
             frontPiecePos = new Position(pos.x()+1, pos.y());
             if (board.getPiece(frontPiecePos) == null) legalMoves.add(frontPiecePos);
@@ -45,7 +45,7 @@ public class Pawn extends Piece {
             }
 
         } else if (pieceColor == PieceColor.WHITE){
-            if(pos.x() == 6 && board.getPiece(new Position(pos.x()-2, pos.y()))== null) legalMoves.add(new Position(pos.x()-2, pos.y()));
+            if(pos.x() == 6 && board.getPiece(new Position(pos.x()-2, pos.y())) == null && board.getPiece(new Position(pos.x()-1, pos.y())) == null) legalMoves.add(new Position(pos.x()-2, pos.y()));
             if(pos.x() == 0) return legalMoves;
 
             frontPiecePos = new Position(pos.x()-1, pos.y());
