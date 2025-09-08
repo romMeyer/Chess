@@ -42,4 +42,22 @@ public abstract class Piece {
     public void setMoved(Boolean moved) {
         this.moved = moved;
     }
+
+    public Piece copy() {
+        // Constructeur identique, avec la couleur et l’état "moved" et "enPassant"
+        Piece clone = switch (this.getClass().getSimpleName()) {
+            case "Pawn" -> new Pawn(pieceColor);
+            case "Rook" -> new Rook(pieceColor);
+            case "Knight" -> new Knight(pieceColor);
+            case "Bishop" -> new Bishop(pieceColor);
+            case "Queen" -> new Queen(pieceColor);
+            case "King" -> new King(pieceColor);
+            default -> null;
+        };
+        if (clone != null) {
+            clone.setMoved(this.moved);
+            clone.setEnPassant(this.enPassant);
+        }
+        return clone;
+    }
 }

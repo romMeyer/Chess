@@ -6,18 +6,15 @@ import fr.finkit.Piece.Position;
 import fr.finkit.core.Board;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 
 public class BoardView {
     private final GridPane grid = new GridPane();
@@ -27,8 +24,6 @@ public class BoardView {
     private Position selected; // case sélectionnée
     private final HashSet<Position> legalHighlights = new HashSet<>();
 
-    // cache images (pieceName -> Image)
-    private final Map<String, Image> imageCache = new HashMap<>();
 
     public BoardView(Board board, int tileSize) {
         this.board = board;
@@ -75,7 +70,7 @@ public class BoardView {
         // Si une pièce est déjà sélectionnée et (r,c) est un coup légal → on joue
         if (selected != null) {
             if (legalHighlights.contains(clicked)) {
-                if (board.move(selected, clicked)) { // utilise ta méthode move(Position, Position)
+                if (board.play(selected, clicked)) { // utilise ta méthode move(Position, Position)
                     clearSelection();
                     render();
                     return;
