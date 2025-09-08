@@ -10,8 +10,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage){
-        Board board = new Board(true);
-        var view = new BoardView(board, 105);
+        Board board = new Board();
+        var view = new BoardView(board, 80); // 80px par case (ajuste)
 
         Scene scene = new Scene(view.getRoot());
         stage.setTitle("Chess");

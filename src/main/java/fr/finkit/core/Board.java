@@ -8,36 +8,10 @@ import java.util.List;
 public class Board {
     Piece[][] terrain;
     PieceColor playerTurn = PieceColor.WHITE;
-    Boolean computer;
 
-    public Board(Boolean computer) {
+    public Board() {
         this.terrain = new Piece[8][8];
-        this.computer = computer;
         initTerrain();
-    }
-
-    public boolean play(Position piecePos, Position pos) {
-        if (!computer) {
-            return move(piecePos, pos);
-        }
-
-        if (playerTurn == PieceColor.WHITE) {
-            boolean ok = move(piecePos, pos);
-            if (ok) {
-                Move aiMove = MinMax.getBestMove(this, 4);
-                if (aiMove != null) {
-                    move(aiMove.from(), aiMove.to());
-                }
-            }
-            return ok;
-        } else {
-            // Si jamais on appelle play() quand c’est au tour de l’IA
-            Move aiMove = MinMax.getBestMove(this, 4);
-            if (aiMove != null) {
-                return move(aiMove.from(), aiMove.to());
-            }
-        }
-        return false;
     }
 
     public List<Position> getLegalMovesForPiece(Position pos){
@@ -45,22 +19,26 @@ public class Board {
         List<Position> moves = piece.getLegalMoves(this, pos);
         List<Position> legalMoves = new ArrayList<>();
 
-        for (Position move : moves) {
-            Piece captured = getPiece(move);
+        if (isCheck() == playerTurn){
+            for (Position move : moves) {
+                Piece captured = getPiece(move);
 
-            setPiece(move, piece);
-            setPiece(pos, null);
+                setPiece(move, piece);
+                setPiece(pos, null);
 
-            boolean safe = (isCheck() != playerTurn);
+                boolean safe = (isCheck() != playerTurn);
 
-            setPiece(pos, piece);
-            setPiece(move, captured);
+                setPiece(pos, piece);
+                setPiece(move, captured);
 
-            if(safe){
-                legalMoves.add(move);
+                if(safe){
+                    legalMoves.add(move);
+                }
             }
+            return legalMoves;
         }
-        return legalMoves;
+
+        return moves;
     }
 
     public boolean move(Position piecePos, Position pos) {
@@ -91,6 +69,8 @@ public class Board {
         if (piece.getColor() == PieceColor.BLACK) piece.setEnPassant( piecePos.x() == 1 && pos.x() == 3);
         else piece.setEnPassant(piecePos.x() == 6 && pos.x() == 4);
 
+        if(piece.getEnPassant()) System.out.println(piece.getColor());
+
         if (piecePos.y() != pos.y() && getPiece(pos) == null) {
             Position capturedPos = new Position(piecePos.x(), pos.y());
             setPiece(capturedPos, null);
@@ -99,6 +79,7 @@ public class Board {
 
     private void checkCastling(Position piecePos, Position pos, Piece piece) {
         if (!(piece instanceof King) || piece.getMoved()) return;
+        System.out.println(piecePos.x() - pos.x());
 
         Piece rook;
         if (Math.abs(piecePos.y() - pos.y()) == 2){
@@ -176,38 +157,6 @@ public class Board {
 
     public void setPiece(Position pos, Piece piece) {
         terrain[pos.x()][pos.y()] = piece;
-    }
-
-    public Board copy() {
-        Board board = new Board(computer);
-        board.playerTurn = this.playerTurn;
-        board.terrain = new Piece[8][8];
-
-        for (int r = 0; r < 8; r++) {
-            for (int c = 0; c < 8; c++) {
-                Piece p = this.terrain[r][c];
-                if (p != null) {
-                    board.terrain[r][c] = p.copy();
-                }
-            }
-        }
-        return board;
-    }
-
-    public List<Move> getAllLegalMoves(PieceColor color) {
-        List<Move> allMoves = new ArrayList<>();
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
-                Position pos = new Position(row, col);
-                Piece piece = getPiece(pos);
-                if (piece != null && piece.getColor() == color) {
-                    for (Position target : getLegalMovesForPiece(pos)) {
-                        allMoves.add(new Move(pos, target));
-                    }
-                }
-            }
-        }
-        return allMoves;
     }
 
 }
