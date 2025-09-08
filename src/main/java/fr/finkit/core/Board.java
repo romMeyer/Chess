@@ -47,8 +47,10 @@ public class Board {
         if (getLegalMovesForPiece(piecePos).contains(pos)){
 
             checkEnPassant(piecePos, pos, piece);
+            checkCastling(piecePos, pos, piece);
             setPiece(pos, piece);
             setPiece(piecePos, null);
+            piece.setMoved(true);
             playerTurn = (playerTurn == PieceColor.WHITE) ? PieceColor.BLACK : PieceColor.WHITE;
 
             return true;
@@ -72,6 +74,23 @@ public class Board {
         if (piecePos.y() != pos.y() && getPiece(pos) == null) {
             Position capturedPos = new Position(piecePos.x(), pos.y());
             setPiece(capturedPos, null);
+        }
+    }
+
+    private void checkCastling(Position piecePos, Position pos, Piece piece) {
+        if (!(piece instanceof King) || piece.getMoved()) return;
+        System.out.println(piecePos.x() - pos.x());
+
+        Piece rook;
+        if (Math.abs(piecePos.y() - pos.y()) == 2){
+            rook = getPiece(new Position(pos.x(), pos.y()+1));
+            setPiece(new Position(pos.x(), pos.y()+1), null);
+            setPiece(new Position(pos.x(), pos.y()-1), rook);
+        } else if (Math.abs(piecePos.y() - pos.y()) == 3) {
+            rook = getPiece(new Position(pos.x(), pos.y()-1));
+            setPiece(new Position(pos.x(), pos.y()-1), null);
+            setPiece(new Position(pos.x(), pos.y()+1), rook);
+
         }
     }
 

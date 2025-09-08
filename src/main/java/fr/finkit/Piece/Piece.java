@@ -8,10 +8,13 @@ public abstract class Piece {
     protected PieceColor pieceColor;
     protected String img;
     protected Boolean enPassant;
+    protected Boolean moved;
+
 
     public Piece(PieceColor pieceColor) {
         this.pieceColor = pieceColor;
         enPassant = false;
+        moved = false;
     }
 
     public abstract List<Position> getLegalMoves(Board board, Position position);
@@ -30,5 +33,13 @@ public abstract class Piece {
 
     public void setEnPassant(Boolean enPassant) {
         this.enPassant = enPassant;
+    }
+
+    public Boolean getMoved() {
+        return moved;
+    }
+
+    public void setMoved(Boolean moved) {
+        this.moved = moved;
     }
 }
